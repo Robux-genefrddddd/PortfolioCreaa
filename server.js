@@ -1,5 +1,5 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API route for AI chat
-app.post('/api/ai/chat', async (req, res) => {
+app.post("/api/ai/chat", async (req, res) => {
   const {
     userMessage,
     conversationHistory,
@@ -104,14 +104,16 @@ app.post('/api/ai/chat', async (req, res) => {
 });
 
 // Serve static files from dist/spa
-app.use(express.static(path.join(__dirname, 'dist/spa'), {
-  maxAge: '1y',
-  etag: false
-}));
+app.use(
+  express.static(path.join(__dirname, "dist/spa"), {
+    maxAge: "1y",
+    etag: false,
+  }),
+);
 
 // Handle React Router - serve index.html for all non-API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/spa/index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist/spa/index.html"));
 });
 
 app.listen(port, () => {
