@@ -42,5 +42,8 @@ EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8080', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
+# Copy server file
+COPY server.js .
+
 # Start the server
-CMD ["node", "-e", "const express = require('express'); const path = require('path'); const app = express(); app.use(express.static(path.join(__dirname, 'dist/spa'))); app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'dist/spa/index.html'))); app.listen(8080, () => console.log('Server running on port 8080'))"]
+CMD ["node", "server.js"]
