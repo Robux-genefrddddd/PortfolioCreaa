@@ -4,9 +4,6 @@
 app = "portfolio-creaa"
 primary_region = "cdg"
 
-[build]
-  builder = "heroku"
-
 [env]
   PORT = "8080"
 
