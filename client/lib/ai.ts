@@ -62,24 +62,26 @@ export class AIService {
         }),
       });
 
-      // Try to parse response body as text first, then JSON
-      let responseText: string;
-      try {
-        responseText = await response.text();
-      } catch (error) {
-        console.error("Failed to read response:", error);
-        throw new Error("Erreur serveur: impossible de lire la réponse");
-      }
+      // Clone response to avoid stream consumption issues
+      const clonedResponse = response.clone();
 
       let data: any;
       try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Failed to parse response JSON:", parseError);
-        console.error("Response was:", responseText.substring(0, 500));
-        throw new Error(
-          `Erreur serveur: réponse invalide (${responseText.substring(0, 50)}...)`,
-        );
+        // Try to parse as JSON first
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try reading as text from cloned response
+        console.error("Failed to parse as JSON:", jsonError);
+        try {
+          const responseText = await clonedResponse.text();
+          console.error("Response text was:", responseText.substring(0, 500));
+          throw new Error(
+            `Erreur serveur: réponse invalide (${responseText.substring(0, 50)}...)`,
+          );
+        } catch (textError) {
+          console.error("Failed to read response text:", textError);
+          throw new Error("Erreur serveur: impossible de lire la réponse");
+        }
       }
 
       if (!response.ok) {
